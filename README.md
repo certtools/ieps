@@ -1,7 +1,14 @@
 # IntelMQ Enhancement Proposals
-|#|Name|
-|---|---|
-|001|Configuration Handling
-|002|Mixins
-|003|Internal Data format: Multiple Values
-|004|Internal Data Format: Meta Information and Data Exchange
+|#|Name|Status|
+|---|---|---|
+|001|Configuration Handling|[Implementation in progress](https://github.com/certtools/intelmq/projects/9)|
+|002|Mixins|[Implementation completed](https://github.com/certtools/intelmq/projects/10)|
+|003|Internal Data format: Multiple Values|Undecided|
+|004|Internal Data Format: Meta Information and Data Exchange|Undecided|
+
+## Status legend
+* Implementation completet: IEP was approved by the community, the implementation is in progress
+* Implementation in progress: IEP was approved by the community, the implementation is in progress
+* Implementation waiting: IEP was approved by the community, the implementation is waiting
+* Undecided: Community did not yet decide
+* Dismissed: IEP was not approved by the community
