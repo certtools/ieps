@@ -3,7 +3,7 @@
 |---|---|---|
 |001|Configuration Handling|[Implementation in progress](https://github.com/certtools/intelmq/projects/9)|
 |002|Mixins|[Implementation completed](https://github.com/certtools/intelmq/projects/10)|
-|003|Internal Data format: Multiple Values|Undecided|
+|003|Internal Data Format: Multiple Values|Dismissed|
 |004|Internal Data Format: Meta Information and Data Exchange|Undecided|
 
 ## Status legend
