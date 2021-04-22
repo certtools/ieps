@@ -7,7 +7,7 @@
 |004|Internal Data Format: Meta Information and Data Exchange|Undecided|
 
 ## Status legend
-* Implementation completet: IEP was approved by the community, the implementation is in progress
+* Implementation completed: IEP was approved by the community, the implementation is in progress
 * Implementation in progress: IEP was approved by the community, the implementation is in progress
 * Implementation waiting: IEP was approved by the community, the implementation is waiting
 * Undecided: Community did not yet decide
