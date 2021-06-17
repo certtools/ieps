@@ -8,7 +8,7 @@
 |005|[Internal Data Format: Notification settings](005/)|Undiscussed|3.0.0 or 3.1.0|
 
 ## Status legend
-* Implementation completed: IEP was approved by the community, the implementation is in progress
+* Implementation completed: IEP was approved by the community, the implementation is completed
 * Implementation in progress: IEP was approved by the community, the implementation is in progress
 * Implementation waiting: IEP was approved by the community, the implementation is waiting
 * Undecided: Community did not yet decide
