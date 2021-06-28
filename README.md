@@ -6,6 +6,7 @@
 |003|[Internal Data Format: Multiple Values](003/)|Dismissed|3.0.0|
 |004|[Internal Data Format: Meta Information and Data Exchange](004/)|Undecided/Postponed|3.x.0 or 4.0.0|
 |005|[Internal Data Format: Notification settings](005/)|Undiscussed|3.0.0 or 3.1.0|
+|006|[Internal Data Format: Msgpack as serializer](006/)|Undiscussed|3.x.0 or 4.0.0|
 
 ## Status legend
 * Implementation completed: IEP was approved by the community, the implementation is completed
