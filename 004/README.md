@@ -1,14 +1,16 @@
 # IEP04 - Internal Data Format: Meta Information and Data Exchange
 
-Authors: Pavel Kacha (CESNET.cz), Sebastian Wagner (CERT.at), Sebastian Waldbauer (CERT.at)
+Authors: Pavel Kacha (CESNET.cz), Sebastian Wagner (CERT.at), Sebastian Waldbauer (CERT.at), Aaron Kaplan (CERT.at)
 
 To ease data exchange between two or more IntelMQ instances, adding some meta-information to the messages can make this sharing easier in certain regards.
 For describing relations between messages ("links"), messages always have one UUID identifying themself and an arbitrary number of related UUIDs together with the link type.
 
-## TL;DR
-Communication between one or more IntelMQ instances & exchange data with a backwards-compatible format. P2P or centralized architecture is a big topic, which has to be discussed after the format is being set.
+The primary goal of this is to facilitate date-exchange between IntelMQ instance in different organisations, to prevent message loops.
+The secondary goal is to express relations between messages.
 
-## Use-Cases for unique identifiers and message-to-message relations
+## Possible Use-Cases for unique identifiers and message-to-message relations
+
+The possible use-cases which can be solved by UUIDs per message:
 
 1. Events with multiple target IPs/hostnames/ports
   - Horizontal portscan (multiple machines, one port)
@@ -49,27 +51,31 @@ Taking into account the possibility of linking of events, there might be other o
     wrong, sent by error, forget it"
 
 I believe pretty much all are solvable by linking of events:
-1, 2, 3 as bunch of linked events with source-target relation in each of them
-4 as two linked events - one with all the sources, one with all the targets
-5 as additional calculated identifier, hard part is not storage, but standardization/calculation
-6 as additional opaque (freehand, non UUID) identifiers
-7, 8 as bunch of linked events, with possibility of some meta-event maybe
-9 as additional type of link
+- 1, 2, 3 as bunch of linked events with source-target relation in each of them
+- 4 as two linked events - one with all the sources, one with all the targets
+- 5 as additional calculated identifier, hard part is not storage, but standardization/calculation
+- 6 as additional opaque (freehand, non UUID) identifiers
+- 7, 8 as bunch of linked events, with possibility of some meta-event maybe
+- 9 as additional type of link
 
 ### Meta information
 Metadata is used to transfer some general data, which is not likely related to the event itself. It's more or less just an information to keep events clear & sortable.
 
+#### Variant A
 A message could look like:
 ```json
 {
     "meta": {
         "version": 1, // protocol version, so we are allowed to fallback to old versions too
         "uuid": {
-           "current": "cert_at:aaaa-bbbb-cccc-dddd" // format to be decided
-           "parent": "cert_at:xxxx-yyyy-zzzz-ffff" // format to be discussed, if not set -> current is the parent uuid
+           "origin": "" // the creating instance
+           "id": "" // the id of the message itself
+           "related": ["342a94d0-a8f6-11eb-b55d-3fbbafa57450", "d256379e-a8f7-11eb-8f63-2fb9e3acb5fb"],
+           "group": ["ed4e10f8-a8f7-11eb-baaa-33efc701ab52"],
+           "alternate": ["RT#1234", "cesnet-certs:fed4740c-a8f7-11eb-9e47-efc1855d7a66"]
         },
         "type": "event",
-        "format": "intelmq", // i. e. this field could contain "n6" or "idea", so the receiving component can decode on demand.
+        "format": "intelmq", // or "n6" or "idea", so the receiving component can decode on demand.
     },
     "payload": { // normal intelmq data
         "source.ip": "127.0.0.1",
@@ -79,14 +85,46 @@ A message could look like:
 }
 ```
 
-Tell us your opinion about adding non-standardized meta-information fields ( i. e. RTIR ticket number, origin, other local contact informationen ... and so on )
+#### Variant B
+Representing links in RDF:
+```json
+{
+    "meta": {
+        "version": 1, // protocol version, so we are allowed to fallback to old versions too
+        "uuid": {
+            "origin": "" // the creating instance
+            "id": "" // the id of the message itself
+            "links": [
+                {
+                    "left_side": "342a94d0-a8f6-11eb-b55d-3fbbafa57450",
+                    "type": "is_parent_event",
+                    "right_side": "d256379e-a8f7-11eb-8f63-2fb9e3acb5fb"]
+                },
+                ...
+            ]
+        },
+        "type": "event",
+        "format": "intelmq", // or: "n6" or "idea", so the receiving component can decode on demand.
+    },
+    "payload": { // normal intelmq data
+        "source.ip": "127.0.0.1",
+        "source.fqdn": "example.com",
+        "raw": // base64-blob
+    }
+}
+```
 
-#### The UUID
-For the UUID there are multiple options:
-1. Generate a random 128 bit UUID
-2. A list of entities, which dealt with this event already. For example if an event was passed on from cert-at to cert-ee, the field could look like `!cert-at!cert-ee`. A message sending loop can be detected if the own name is already in this field upon reception.
-3. Using CyCat: `publisher-short-name:project-short-name:UUID`. For example: `cert-at:intelmq:72ddb00c-2d0a-4eea-b7ac-ae122b8e6c3b`, or  `cert-pl:n6:f60c9fb9-81f9-4e0b-8a44-ea41326a15b3`. Some more research and discussion is required before the implementation of this option. Have a look at https://www.cycat.org/services/concept/ for more details.
-4. A hash: A benefit using a hash is that we're able to recalculate them on every intelmq instance.
+### The UUID
+The purpose of the UUID is to identify the message uniquely.
+The UUID is assigned upon creation of the message.
+
+For the format of the UUID there are multiple options:
+1. Generate a 128 bit (hex-string) UUIDv4.
+2. Generate a [UUIDv6](http://gh.peabody.io/uuidv6/) ([RFC](https://datatracker.ietf.org/doc/html/draft-peabody-dispatch-new-uuid-format)). Smaller then UUIDv4, fits into a 64 bit integer, time-based, include the originator.
+3. ~~A list of entities~~, which dealt with this event already. For example if an event was passed on from cert-at to cert-ee, the field could look like `!cert-at!cert-ee`. A message sending loop can be detected if the own name is already in this field upon reception.
+4. Using CyCat: `publisher-short-name:project-short-name:UUID`. For example: `cert-at:intelmq:72ddb00c-2d0a-4eea-b7ac-ae122b8e6c3b`, or  `cert-pl:n6:f60c9fb9-81f9-4e0b-8a44-ea41326a15b3`. Some more research and discussion is required before the implementation of this option. Have a look at https://www.cycat.org/services/concept/ for more details.
+5. ~~A hash~~: A benefit using a hash is that we're able to recalculate them on every intelmq instance. As this implies changed UUIDs on every minor change of the message, this approach has been dismissed.
+6. [Sonyflake](https://github.com/certtools/ieps/issues/1#issuecomment-884079804-permalink): A compact UUID format using 39 bits for time in units of 10 msec, 8 bits for a sequence number, 16 bits for a machine (or bot) id. This covers the timestamp, the unique identity and origin.
 
 ### Exporting events to other systems
 In IntelMQ 2.x the events only comprise of the "payload" and no meta information. For local storages like file output or databases, the meta information may not be relevant in some use-cases. So it needs to be possible to export events *without* meta information, which is also the backwards-compatible behaviour.
@@ -94,7 +132,12 @@ In IntelMQ 2.x the events only comprise of the "payload" and no meta information
 The "type" field exists in the current format as `__type` in the flat payload structure. In the output bots there's currently a boolean parameter `message_with_type` to include the field `__type` in the "export".
 For optionally exporting meta-information like uuid or format, a similar logic could be used.
 
-### How can data exchange work?
+### Future extension of the Meta-Field
+The Meta-field can be extended in the future by other fields, for example [FIRST IEP Policies](https://www.first.org/iep/iep-polices).
+The Meta-field could be extendable by `x-*` fields. The usage of these fields should be documented in IntelMQ's format documentation.
+This is not part of this IEP and will be specified in the future.
+
+### Excursion: How can data exchange work?
 This now depends on how IntelMQ instances can communicate, either Peer-to-peer or via a central data hub. Both of them do have pro's and con's.
 
 #### P2P ( Peer 2 Peer )
