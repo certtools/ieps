@@ -248,7 +248,63 @@ Decoding as of 2021-08-06
 ## Snowflake
 TODO
 
-## Sonyflake
-TODO
-
 ##
+
+## Sonyflake
+is also a UUID but fits in an unsigned 64bit integer, so in terms of memory consumption & computing its faster than
+all of them above
+
+Used [sonyflake-py](https://pypi.org/project/sonyflake-py/) for the tests
+
+### python 2.x example
+```bash
+~$ python
+
+```
+
+### python 3.x example
+```bash
+~$ python3
+>>> import sonyflake
+>>> from datetime import datetime, timezone
+>>> sf = sonyflake.SonyFlake(machine_id=lambda: 1337, start_time=datetime(2021, 1, 1, 0, 0, 0, 0, tzinfo=timezone.utc))
+>>> for x in range(5):
+...     next = sf.next_id()
+...     print(next)
+...     print(sf.decompose(next))
+...
+31948301431473465
+{'id': 31948301431473465, 'msb': 0, 'time': 1904267158, 'sequence': 0, 'machine_id': 1337}
+31948301431539001
+{'id': 31948301431539001, 'msb': 0, 'time': 1904267158, 'sequence': 1, 'machine_id': 1337}
+31948301431604537
+{'id': 31948301431604537, 'msb': 0, 'time': 1904267158, 'sequence': 2, 'machine_id': 1337}
+31948301431670073
+{'id': 31948301431670073, 'msb': 0, 'time': 1904267158, 'sequence': 3, 'machine_id': 1337}
+31948301431735609
+{'id': 31948301431735609, 'msb': 0, 'time': 1904267158, 'sequence': 4, 'machine_id': 1337}
+```
+
+### Decode
+```python
+from datetime import datetime, timezone, tzinfo
+from sonyflake.sonyflake import SonyFlake
+
+
+val = input("Enter id: ")
+parts = SonyFlake.decompose(int(val))
+start_time = SonyFlake.to_sonyflake_time(datetime(2021, 1, 1, 0, 0, 0, 0, tzinfo=timezone.utc))
+
+print("DateTime: {}, MachineId: {}, Sequence: {}".format(
+    datetime.fromtimestamp((parts['time'] + start_time) / 100),
+    parts['machine_id'],
+    parts['sequence']
+))
+```
+
+If we enter `31948301431670073` the result will be
+```bash
+
+```
+
+### Conclusion
