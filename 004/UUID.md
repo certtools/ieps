@@ -100,8 +100,6 @@ No relevant data inside the uuid, only used as unique identifier.
 ## UUIDv4
 100% unique, not reproduceable.
 
-### IMPORTANT
-
 ### python 2.x example
 ```bash
 ~$ python
@@ -133,12 +131,10 @@ decode: variant: DCE 1.1, ISO/IEC 11578:1996
 ```
 
 ### Conclusion
-TODO
+Totally random data, so its hard to reproduce the given uuid.
 
 ## UUIDv5
 Generate a UUID based on the SHA-1 hash of a namespace identifier (which is a UUID) and a name (which is a string). [Source](https://docs.python.org/3/library/uuid.html#uuid.uuid5)
-
-### IMPORTANT
 
 ### python 2.x example
 ```bash
@@ -245,11 +241,6 @@ Decoding as of 2021-08-06
 
 ```
 
-## Snowflake
-TODO
-
-##
-
 ## Sonyflake
 is also a UUID but fits in an unsigned 64bit integer, so in terms of memory consumption & computing its faster than
 all of them above
@@ -304,7 +295,9 @@ print("DateTime: {}, MachineId: {}, Sequence: {}".format(
 
 If we enter `31948301431670073` the result will be
 ```bash
-
+DateTime: 2021-08-09 11:37:51.580000, MachineId: 1337, Sequence: 2
 ```
 
 ### Conclusion
+Contains the timestamp, which bot it procuded and a sequence number. The time is in our case the important field, because we
+are now able to sort events based upon time.
