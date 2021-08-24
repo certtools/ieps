@@ -307,5 +307,5 @@ DateTime: 2021-08-09 11:37:51.580000, MachineId: 1337, Sequence: 2
 ```
 
 ### Conclusion
-Contains the timestamp, which bot it procuded and a sequence number. The time is in our case the important field, because we
+Contains the timestamp, which bot it produced and a sequence number. The time is in our case the important field, because we
 are now able to sort events based upon time.
