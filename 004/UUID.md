@@ -5,6 +5,13 @@ The most important requirement is: The UUID MUST be 100% unique.
 
 In general there are multiple solutions & implementations for uuids.
 
+||UUIDv1|UUIDv3|UUIDv4|UUIDv5|UUIDv6|Sonyflake|
+|--|--|--|--|--|--|--|
+|Time-based|✅|❌|❌|❌|✅|✅|
+|Sortable|❌|❌|❌|❌|✅|✅|
+|Size|128bit (hex)|128bit (hex)|128bit (hex)|128bit (hex)|128bit (hex)|unsigned 64bit
+|Info|Major change in Python 3.7||||Currently a draft||
+
 # Quick information
 ## Used tools
 - Using [uuid](http://www.ossp.org/pkg/lib/uuid/) package for decoding
