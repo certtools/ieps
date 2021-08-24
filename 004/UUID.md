@@ -8,7 +8,7 @@ In general there are multiple solutions & implementations for uuids.
 ||UUIDv1|UUIDv3|UUIDv4|UUIDv5|UUIDv6|Sonyflake|
 |--|--|--|--|--|--|--|
 |Time-based|✅|❌|❌|❌|✅|✅|
-|Sortable|❌|❌|❌|❌|✅|✅|
+|Time-sortable|❌|❌|❌|❌|✅|✅|
 |Includes Randomness|✅|❌|✅|❌|✅|✅|
 |Size|128bit (hex)|128bit (hex)|128bit (hex)|128bit (hex)|128bit (hex)|unsigned 64bit
 |Info|Major change in Python 3.7||||Currently a draft||
