@@ -9,7 +9,7 @@ In general there are multiple solutions & implementations for uuids.
 |--|--|--|--|--|--|--|
 |Time-based|✅|❌|❌|❌|✅|✅|
 |Sortable|❌|❌|❌|❌|✅|✅|
-|Random|✅|❌|✅|❌|✅|✅|
+|Includes Randomness|✅|❌|✅|❌|✅|✅|
 |Size|128bit (hex)|128bit (hex)|128bit (hex)|128bit (hex)|128bit (hex)|unsigned 64bit
 |Info|Major change in Python 3.7||||Currently a draft||
 
