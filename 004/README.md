@@ -69,10 +69,10 @@ Based on the [AIL Stream Format version 1](https://github.com/ail-project/ail-ex
     "version": 1, // protocol version, so we are allowed to fallback to old versions too
     "type": "event",
     "meta": {
-       "intelmq:uuid": "" // the id of the message itself
-       "intelmq:uuid_org": "" // the creating instance
-       "intelmq:related": ["342a94d0-a8f6-11eb-b55d-3fbbafa57450", "d256379e-a8f7-11eb-8f63-2fb9e3acb5fb"],
-       "intelmq:group": ["ed4e10f8-a8f7-11eb-baaa-33efc701ab52"],
+       "intelmq:uuid": "event-uuid-1",
+       "intelmq:uuid_org": "org-uuid", // the creating instance
+       "intelmq:related": ["event-uuid-2", "event-uuid-3"],
+       "intelmq:group": ["event-uuid-4"],
        "intelmq:alternate": ["RT#1234", "cesnet-certs:fed4740c-a8f7-11eb-9e47-efc1855d7a66"]
     },
     "payload": { // normal intelmq data
@@ -90,10 +90,10 @@ A message could look like:
     "meta": {
         "version": 1, // protocol version, so we are allowed to fallback to old versions too
         "uuid": {
-           "origin": "" // the creating instance
-           "id": "" // the id of the message itself
-           "related": ["342a94d0-a8f6-11eb-b55d-3fbbafa57450", "d256379e-a8f7-11eb-8f63-2fb9e3acb5fb"],
-           "group": ["ed4e10f8-a8f7-11eb-baaa-33efc701ab52"],
+           "origin": "org-uuid",
+           "id": "event-uuid-1",
+           "related": ["event-uuid-2", "event-uuid-3"],
+           "group": ["event-uuid-4"],
            "alternate": ["RT#1234", "cesnet-certs:fed4740c-a8f7-11eb-9e47-efc1855d7a66"]
         },
         "type": "event",
@@ -114,13 +114,13 @@ Representing links in RDF:
     "meta": {
         "version": 1, // protocol version, so we are allowed to fallback to old versions too
         "uuid": {
-            "origin": "" // the creating instance
-            "id": "" // the id of the message itself
+            "origin": "org-uuids",
+            "id": "event-uuid-1",
             "links": [
                 {
-                    "left_side": "342a94d0-a8f6-11eb-b55d-3fbbafa57450",
+                    "left_side": "event-uuid-2",
                     "type": "is_parent_event",
-                    "right_side": "d256379e-a8f7-11eb-8f63-2fb9e3acb5fb"]
+                    "right_side": "event-uuid-3"]
                 },
                 ...
             ]
@@ -140,13 +140,7 @@ Representing links in RDF:
 The purpose of the UUID is to identify the message uniquely.
 The UUID is assigned upon creation of the message.
 
-For the format of the UUID there are multiple options:
-1. Generate a 128 bit (hex-string) UUIDv4.
-2. Generate a [UUIDv6](http://gh.peabody.io/uuidv6/) ([RFC](https://datatracker.ietf.org/doc/html/draft-peabody-dispatch-new-uuid-format)). Smaller then UUIDv4, fits into a 64 bit integer, time-based, include the originator.
-3. ~~A list of entities~~, which dealt with this event already. For example if an event was passed on from cert-at to cert-ee, the field could look like `!cert-at!cert-ee`. A message sending loop can be detected if the own name is already in this field upon reception.
-4. Using CyCat: `publisher-short-name:project-short-name:UUID`. For example: `cert-at:intelmq:72ddb00c-2d0a-4eea-b7ac-ae122b8e6c3b`, or  `cert-pl:n6:f60c9fb9-81f9-4e0b-8a44-ea41326a15b3`. Some more research and discussion is required before the implementation of this option. Have a look at https://www.cycat.org/services/concept/ for more details.
-5. ~~A hash~~: A benefit using a hash is that we're able to recalculate them on every intelmq instance. As this implies changed UUIDs on every minor change of the message, this approach has been dismissed.
-6. [Sonyflake](https://github.com/certtools/ieps/issues/1#issuecomment-884079804-permalink): A compact UUID format using 39 bits for time in units of 10 msec, 8 bits for a sequence number, 16 bits for a machine (or bot) id. This covers the timestamp, the unique identity and origin.
+For the format of the UUID there are multiple options, see document [UUID](UUID.md) for a comparison.
 
 ### Exporting events to other systems
 In IntelMQ 2.x the events only comprise of the "payload" and no meta information. For local storages like file output or databases, the meta information may not be relevant in some use-cases. So it needs to be possible to export events *without* meta information, which is also the backwards-compatible behaviour.
