@@ -61,6 +61,28 @@ I believe pretty much all are solvable by linking of events:
 ### Meta information
 Metadata is used to transfer some general data, which is not likely related to the event itself. It's more or less just an information to keep events clear & sortable.
 
+#### Variant AIL
+Based on the [AIL Stream Format version 1](https://github.com/ail-project/ail-exchange-format/blob/main/ail-stream.md#user-content-ail-stream-format-version-1):
+```json
+{
+    "format": "intelmq", // or "n6" or "idea", so the receiving component can decode on demand.
+    "version": 1, // protocol version, so we are allowed to fallback to old versions too
+    "type": "event",
+    "meta": {
+       "intelmq:uuid": "" // the id of the message itself
+       "intelmq:uuid_org": "" // the creating instance
+       "intelmq:related": ["342a94d0-a8f6-11eb-b55d-3fbbafa57450", "d256379e-a8f7-11eb-8f63-2fb9e3acb5fb"],
+       "intelmq:group": ["ed4e10f8-a8f7-11eb-baaa-33efc701ab52"],
+       "intelmq:alternate": ["RT#1234", "cesnet-certs:fed4740c-a8f7-11eb-9e47-efc1855d7a66"]
+    },
+    "payload": { // normal intelmq data
+        "source.ip": "127.0.0.1",
+        "source.fqdn": "example.com",
+        "raw": // base64-blob
+    }
+}
+```
+
 #### Variant A
 A message could look like:
 ```json
