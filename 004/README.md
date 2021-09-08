@@ -61,8 +61,8 @@ I believe pretty much all are solvable by linking of events:
 ### Meta information
 Metadata is used to transfer some general data, which is not likely related to the event itself. It's more or less just an information to keep events clear & sortable.
 
-#### Variant AIL
-Based on the [AIL Stream Format version 1](https://github.com/ail-project/ail-exchange-format/blob/main/ail-stream.md#user-content-ail-stream-format-version-1):
+#### Variant AIL-A
+Based on the [AIL Stream Format version 1](https://github.com/ail-project/ail-exchange-format/blob/main/ail-stream.md#user-content-ail-stream-format-version-1), mixed with original Variant A, see below:
 ```json
 {
     "format": "intelmq", // or "n6" or "idea", so the receiving component can decode on demand.
@@ -83,18 +83,47 @@ Based on the [AIL Stream Format version 1](https://github.com/ail-project/ail-ex
 }
 ```
 
+
+#### Variant AIL-B
+Based on the [AIL Stream Format version 1](https://github.com/ail-project/ail-exchange-format/blob/main/ail-stream.md#user-content-ail-stream-format-version-1), mixed with original Variant B, see below:
+```json
+{
+    "format": "intelmq", // or "n6" or "idea", so the receiving component can decode on demand.
+    "version": 1, // protocol version, so we are allowed to fallback to old versions too
+    "type": "event",
+    "meta": {
+        "intelmq:uuid": "event-uuid-1",
+        "intelmq:uuid_org": "org-uuid", // the creating instance
+        "intelmq:links": [
+            {
+                "left_side": "event-uuid-2",
+                "type": "is_parent_event",
+                "right_side": "event-uuid-3"]
+			},
+			...
+		]
+    },
+    "payload": { // normal intelmq data
+        "source.ip": "127.0.0.1",
+        "source.fqdn": "example.com",
+        "raw": // base64-blob
+    }
+}
+```
+
+
 #### Variant A
-A message could look like:
+Proposed by Pavel:
 ```json
 {
     "meta": {
         "version": 1, // protocol version, so we are allowed to fallback to old versions too
         "uuid": {
-           "origin": "org-uuid",
-           "id": "event-uuid-1",
-           "related": ["event-uuid-2", "event-uuid-3"],
-           "group": ["event-uuid-4"],
-           "alternate": ["RT#1234", "cesnet-certs:fed4740c-a8f7-11eb-9e47-efc1855d7a66"]
+            "origin": "org-uuid",
+            "id": "event-uuid-1",
+            "related": ["event-uuid-2", "event-uuid-3"],
+            "group": ["event-uuid-4"],
+            "alternate": ["RT#1234", "cesnet-certs:fed4740c-a8f7-11eb-9e47-efc1855d7a66"]
         },
         "type": "event",
         "format": "intelmq", // or "n6" or "idea", so the receiving component can decode on demand.
@@ -108,7 +137,7 @@ A message could look like:
 ```
 
 #### Variant B
-Representing links in RDF:
+Representing links in RDF, proposed by Aaron:
 ```json
 {
     "meta": {
