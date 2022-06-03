@@ -1,5 +1,11 @@
+
 # IEP02 - IntelMQ Mixins
 
+## Status
+
+Implemented. See https://github.com/certtools/ieps/#list-of-ieps
+
+## Motivation
 I would like to lower the bar for adding additional bots by introducing mixins.
 Mixins are a concept coming from OOP theory and it is closely related to
 multiple inheritance.
