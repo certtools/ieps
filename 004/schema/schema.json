@@ -1,0 +1,185 @@
+{
+    "$schema": "https://json-schema.org/draft/2019-09/schema",
+    "$id": "http://ail-project.org/ail-example.json",
+    "type": "object",
+    "default": {},
+    "title": "Root Schema",
+    "required": [
+        "format",
+        "version",
+        "type"
+    ],
+    "properties": {
+        "format": {
+            "type": "string",
+            "default": "",
+            "title": "The format Schema",
+            "examples": [
+                "ail", "intelmq", "passive-ssh"
+            ]
+        },
+        "version": {
+            "type": "integer",
+            "default": 1,
+            "title": "The version Schema",
+            "examples": [
+                1
+            ]
+        },
+        "type": {
+            "type": "string",
+            "default": "item",
+            "title": "The type Schema",
+            "examples": [
+                "item", "event", "screenshot", "username", "cryptocurrency", "pgp-dump", "binary", "misp-object"
+            ]
+        },
+        "meta": {
+            "type": "object",
+            "default": {},
+            "title": "The meta Schema",
+            "required": [
+                "uuid"
+            ],
+            "properties": {
+                "uuid": {
+                    "type": "string",
+                    "default": "",
+                    "title": "The uuid of the item in the payload",
+                    "examples": [
+                        "03c51929-eeab-4d47-9dc0-c667f94c7d2c"
+                    ]
+                },
+                "uuid_org": {
+                    "type": "string",
+                    "default": "",
+                    "title": "The UUID of the org emitting the message",
+                    "examples": [
+                        "28bc3db3-16da-461c-b20b-b944f4058708"
+                    ]
+                },
+                "uuid_instance": {
+                    "type": "string",
+                    "default": "",
+                    "title": "The UUID of the instance (sensor) sending the data",
+                    "examples": [
+                        "28bc3db3-16da-461c-b20b-b944f4058708"
+                    ]
+                },
+                "tags": {
+                    "type": "array",
+                    "default": [],
+                    "title": "List of tags",
+                    "items": {
+                        "type": "string",
+                        "title": "A Schema",
+                        "examples": [
+                            "mails",
+                            "custom_tag1", "custom_tag2"
+                        ]
+                    },
+                    "examples": [
+                        ["mails",
+                            "custom_tag1", "custom_tag2"
+                        ]
+                    ]
+                },
+                "encoding": {
+                    "type": "string",
+                    "default": "",
+                    "title": "The encoding Schema",
+                    "examples": [
+                        "base64"
+                    ]
+                },
+                "compress": {
+                    "type": "string",
+                    "default": "",
+                    "title": "The compression used (before encoding)",
+                    "examples": [
+                        "gzip", "bzip2", "lzma"
+                    ]
+                },
+                "ail:id": {
+                    "type": "string",
+                    "default": "",
+                    "title": "The ail:id. Note that any item with a prefix like in 'prefix:key' is custom to the format. It MAY be freely defined by the formats authors",
+                    "examples": [
+                       "object_id"
+                    ]
+                },
+                "ail:mime-type": {
+                    "type": "string",
+                    "default": "",
+                    "title": "The ail:mime-type. Note that any item with a prefix like in 'prefix:key' is custom to the format. It MAY be freely defined by the formats authors",
+                    "examples": [
+                        "text/plain"
+                    ]
+                },
+                "ail:subtype": {
+                    "type": "string",
+                    "default": "",
+                    "title": "The ail:subtype Schema",
+                    "examples": [
+                        "foobar"
+                    ]
+                }
+            },
+            "examples": [{
+                "uuid": "03c51929-eeab-4d47-9dc0-c667f94c7d2c",
+                "uuid_org": "28bc3db3-16da-461c-b20b-b944f4058708",
+                "tags": [
+                    "mails",
+                    "custom_tag"
+                ],
+                "encoding": "base64",
+                "compress": "gzip",
+                "ail:id": "object_id",
+                "ail:mime-type": "text/plain",
+                "ail:subtype": "foobar"
+            }]
+        },
+        "payload": {
+            "type": "object",
+            "default": {},
+            "title": "The payload Schema",
+            "required": [
+                "raw"
+            ],
+            "properties": {
+                "raw": {
+                    "type": "string",
+                    "default": "",
+                    "title": "The raw Schema",
+                    "examples": [
+                        "MjhiYzNkYjMtMTZkYS00NjFjLWIyMGItYjk0NGY0MDU4NzA4Cg=="
+                    ]
+                }
+            },
+            "examples": [{
+                "raw": "MjhiYzNkYjMtMTZkYS00NjFjLWIyMGItYjk0NGY0MDU4NzA4Cg=="
+            }]
+        }
+    },
+    "examples": [{
+        "format": "ail",
+        "version": 1,
+        "type": "item",
+        "meta": {
+            "uuid": "03c51929-eeab-4d47-9dc0-c667f94c7d2c",
+            "uuid_org": "28bc3db3-16da-461c-b20b-b944f4058708",
+            "tags": [
+                "mails",
+                "custom_tag"
+            ],
+            "encoding": "base64",
+            "compress": "gzip",
+            "ail:id": "object_id",
+            "ail:mime-type": "text/plain",
+            "ail:subtype": "foobar"
+        },
+        "payload": {
+            "raw": "MjhiYzNkYjMtMTZkYS00NjFjLWIyMGItYjk0NGY0MDU4NzA4Cg=="
+        }
+    }]
+}
