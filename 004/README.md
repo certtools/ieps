@@ -1,5 +1,10 @@
 # IEP04 - Internal Data Format: Meta Information and Data Exchange
 
+
+## Status
+Decided and formalized via [JSON Schema](schema/schema.json)
+
+## Contents
 Authors: Pavel Kacha (CESNET.cz), Sebastian Wagner (CERT.at), Sebastian Waldbauer (CERT.at), Aaron Kaplan (CERT.at)
 
 To ease data exchange between two or more IntelMQ instances, adding some meta-information to the messages can make this sharing easier in certain regards.
