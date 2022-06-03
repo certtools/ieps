@@ -1,3 +1,9 @@
+# DECISION
+
+By the call 25th of May, 2022, we decided to stay with the IDF intelmq data format as close as possible to AIL's format. There, the UUIDs are UUIDv4. So that nails the decision for IntelMQ's IDF. And UUIDv4 is good enough for the purpose of avoiding routing loops of events.
+
+# Original UUID discussion proposal
+
 Dear intelmq-users & developers,
 
 as of IntelMQ IEP04, we're trying to figure out what requirements have to be met for the uuid.
