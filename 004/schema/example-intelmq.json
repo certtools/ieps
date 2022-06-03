@@ -1,0 +1,19 @@
+{
+    "format": "intelmq",
+    "version": 2,
+    "type": "event",
+    "meta": {
+       "uuid": "03c51929-eeab-4d47-9dc0-aaaaaaaaaaaa",
+       "uuid_org": "28bc3db3-16da-461c-b20b-aaaaaaaaaaaa",
+       "tags": []
+    },
+    "payload": {
+       "raw" : "MjhiYzNkYjMtMTZkYS00NjFjLWIyMGItYjk0NGY0MDU4NzA4Cg==",
+       "source.ip": "1.2.3.4",
+       "destination.ip": "5.6.7.8",
+       "source.asn": "35492",
+       "classification.taxonomy": "Spam",
+       "classification.type": "xyz",
+       "...IntelMQ Data Format key...": "...IntelMQ data format value..."
+    }
+}
