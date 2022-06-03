@@ -1,5 +1,9 @@
 # IEP01 - IntelMQ Configuration Handling
 
+## Status
+
+Implemented
+
 ## Format
 
 ### JSON
