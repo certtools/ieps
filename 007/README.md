@@ -9,6 +9,12 @@ Only `intelmqctl run` provides the ability to run bots interactively in the fore
 
 Starting IntelMQ bots using Python code requires a lot of effort (and code complexity). Additionally, the bot's parameters can only be provided by modifying the IntelMQ runtime configuration file, and messages can only be fed and retrieved from the bot by connecting to the pipeline (e.g.) separately and writing/reading properly serialized messages there.
 
+Minimal example in pseudo code:
+```python
+bot_instance = Bot(parameters)
+bot_instance.process_message(input message) -> output messages
+```
+
 ## Requirements
 
 ### Messages and Pipeline
@@ -76,6 +82,14 @@ Message object (`Report` or `Event`, depending on the Bot type).
 Return value is a list of messages sent by the bot.
 No exceptions of the bot are caught, the caller should handle them according to their needs.
 The bot does not dump any messages to files on errors, irrelevant of the bot's dumping configuration.
+
+As bots can send messages to multiple queues, the return value is a dictionary of all destination queues.
+The items are lists, holding the sent messages.
+
+#### Option: Processing multiple messages at once
+This is a more complex situation in regards to error handling.
+Should one exception stop the processing?
+Should the processing continue and the exceptions be saved in a variable, which is returned at the end together with the sent messages?
 
 ## Examples
 
