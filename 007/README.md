@@ -40,6 +40,43 @@ Maybe as another IEP?
 
 ## Specification
 
+Only changes in the `intelmq.lib.bot.Bot` class are needed.
+No changes in the bots' code are required.
+
+### Bot constructor
+
+The operator constructs the bot by initializing the bot's class.
+Global and bot configuration parameters are provided as paramter to the constructor in the same format as IntelMQ runtime configuration.
+
+```python
+class Bot:
+    def __init__(bot_id: str,
+                 *args, **kwargs,  # any other paramters left out for clarity
+                 settings: Optional[dict] = None)
+```
+The constructor applies all values of the `settings` parameter after reading the runtime configuration file.
+
+### Method call
+
+The `intelmq.lib.bot.Bot` class gets a new method `process_message`.
+The definition:
+```python
+class Bot:
+    def process_message(message: Optional[intelmq.lib.message.Message] = None):
+```
+For collectors:
+    It takes *no* messages as input and returns a list of messages.
+For parsers, experts and outputs:
+    It takes exactly one message as input and returns a list of messages.
+The messages are neither serialized nor encoded in any form, but are objects
+of the `intelmq.lib.message.Message` class. If the message is of instance a dict
+(with or without `__type` item), it will be automatically converted to the appropriate
+Message object (`Report` or `Event`, depending on the Bot type).
+
+Return value is a list of messages sent by the bot.
+No exceptions of the bot are caught, the caller should handle them according to their needs.
+The bot does not dump any messages to files on errors, irrelevant of the bot's dumping configuration.
+
 ## Examples
 
 ### A
@@ -49,7 +86,6 @@ EXAMPLE_REPORT = {"feed.url": "http://www.example.com/",
                   "raw": utils.base64_encode(RAW),
                   "__type": "Report",
                   "feed.name": "Example"}
-input_message = MessageFactory.from_dict(EXAMPLE_REPORT)
 
 bot = test_parser_bot.DummyParserBot('dummy-bot', settings={'global': {'logging_path': None,
                                                                        'source_pipeline_broker': 'Pythonlistsimple',
@@ -57,7 +93,7 @@ bot = test_parser_bot.DummyParserBot('dummy-bot', settings={'global': {'logging_
                                                             'dummy-bot': {'parameters': {'destination_queues': {'_default': 'output',
                                                                                                                 '_on_error': 'error'}}}})
 
-sent_messages = bot.process_call(input_message)
+sent_messages = bot.process_message(EXAMPLE_REPORT)
 # sent_messages is now a dict with all queues. queue names below are examples
 
 # this is the output queue
@@ -75,7 +111,6 @@ EXAMPLE_REPORT = {"feed.url": "http://www.example.com/",
                   "raw": utils.base64_encode(RAW),
                   "__type": "Report",
                   "feed.name": "Example"}
-input_message = MessageFactory.from_dict(EXAMPLE_REPORT)
 
 bot = test_parser_bot.DummyParserBot('dummy-bot', settings={'global': {'logging_path': None,
                                                                        'source_pipeline_broker': 'Pythonlistsimple',
@@ -85,7 +120,7 @@ bot = test_parser_bot.DummyParserBot('dummy-bot', settings={'global': {'logging_
 
 try:
     # bot.process_call being a generator
-    sent_messages = list(bot.process_call(input_message))
+    sent_messages = list(bot.process_message(EXAMPLE_REPORT))
     # sent_messages is now a list of sent messages
 except IntelMQException as exc:
     sys.exit('Processing exception')
