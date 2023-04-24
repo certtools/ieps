@@ -16,9 +16,9 @@ The IEPs should be discussion on the [intelmq-dev Mailinglist](https://lists.cer
 |006|[Internal Data Format: Msgpack as serializer](006/)|Undiscussed|3.x.0 or 4.0.0|
 
 ### Status legend
-* Implementation completed: IEP was approved by the community, the implementation is completed
-* Implementation in progress: IEP was approved by the community, the implementation is in progress
-* Implementation waiting: IEP was approved by the community, the implementation is waiting
-* Undecided: Community did not yet decide
 * Undiscussed: The IEP was not yet discussed and/or is not yet finished
+* Undecided: Community did not yet decided
+* Implementation waiting: IEP was approved by the community, the implementation is waiting
+* Implementation in progress: IEP was approved by the community, the implementation is in progress
+* Implementation completed: IEP was approved by the community, the implementation is completed
 * Dismissed: IEP was not approved by the community
