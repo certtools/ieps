@@ -14,6 +14,7 @@ The IEPs should be discussion on the [intelmq-dev Mailinglist](https://lists.cer
 |004|[Internal Data Format: Meta Information and Data Exchange](004/)|Implementation waiting. Decided and formalized via a [JSON Schema](004/schema/schema.json)|3.x.0 or 4.0.0|
 |005|[Internal Data Format: Notification settings](005/)|Undiscussed|3.x.0 or 4.0.0|
 |006|[Internal Data Format: Msgpack as serializer](006/)|Undiscussed|3.x.0 or 4.0.0|
+|007|[Running IntelMQ as Python Library](007/)|Undiscussed|3.2.0|
 
 ### Status legend
 * Undiscussed: The IEP was not yet discussed and/or is not yet finished
