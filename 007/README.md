@@ -7,29 +7,66 @@ Most tools (including the IntelMQ API, and thus the IntelMQ Manager) use `intelm
 
 Only `intelmqctl run` provides the ability to run bots interactively in the foreground of the command line and provides some neat features for debugging purposes.
 
-Starting IntelMQ bots using Python code requires a lot of effort (and code complexity). Additionally, the bot's parameters can only be provided by modifying the IntelMQ runtime configuration file, and messages can only be fed and retrieved from the bot by connecting to the pipeline (e.g.) separately and writing/reading properly serialized messages there.
+Starting IntelMQ bots using Python code requires much of effort (and code complexity). Additionally, the bot's parameters can only be provided by modifying the IntelMQ runtime configuration file.
+Messages can only be fed and retrieved from the bot by connecting to the pipeline (e.g.) separately and writing/reading properly serialized messages there.
 
-Minimal example in pseudo code:
+Integrating IntelMQ Bots into other (Python) tools is therefore hard to impossible in the current IntelMQ 3.1 version.
+
+In a nutshell, calling a bot and processing should take, at most, a few lines.
+The following complete example shows what the procedure could look like.
+The bot class is instantiated, passing a few parameters.
 ```python
-bot_instance = Bot(parameters)
-bot_instance.process_message(input message) -> output messages
+from intelmq.bots.experts.domain_suffix.expert import DomainSuffixExpertBot
+domain_suffix = DomainSuffixExpertBot('domain-suffix',  # bot id
+                                      settings={'logging_path': None,
+                                                'source_pipeline_broker': 'Pythonlistsimple',  # TBD: Should this be default when called as lib?
+                                                'destination_pipeline_broker': 'Pythonlistsimple',
+                                                'field': 'fqdn',
+                                                'suffix_file': '/usr/share/publicsuffix/public_suffix_list.dat',
+                                                'destination_queues': {'_default': 'output',
+                                                                       '_on_error': 'error'}})
+queues = domain_suffix.process_message({'source.fqdn': 'www.example.com'})
+# Select the output queue (as defined in `destination_queues`), first message, access the field 'source.domain_suffix':
+# >>> output['output'][0]['source.domain_suffix']
+# 'com'
+```
+
+### Use cases
+
+#### Generic
+Any IntelMQ-related or third-party program may use IntelMQ's most potent components - IntelMQ's bots.
+
+#### IntelMQ Webinput Preview
+
+The IntelMQ webinput could show previews of the *processed* data to the operator, not just the input data, adding much more value to the preview functionality.
+Currently the preview gives the operator feedback on the parsing step. The further processing of the data by the bots is invisible to the operator.
+This causes confusion and uncertainty for the operators.
+
+```
+Data provided by operator -> webinput backend parser -> IntelMQ bots as configured in the webinput configuration -> preview shown to operator
+```
+The implementation details for the webinput are not part of the IEP.
+
+In the next step, the webinput can also show previews of notifications (e.g. Emails):
+```
+Data provided by operator -> webinput backend parser -> IntelMQ bots as configured in the webinput configuration -> notification tool (preview mode) -> notification preview shown to operator
 ```
 
 ## Requirements
 
 ### Messages and Pipeline
-It should be possible to provide input messages as function parameters and receiving output messages.
+Providing input messages as function parameters and receiving output messages should be possible.
 
 Messages should not be serialized or encoded, they should stay Message objects (derived from `dict` and behaving like dictionaries).
 
 ### Exceptions and dumped messages
-An exception in the bot's `process()` method should not be catched in intermediate layers and raised to the caller's function call.
+An exception in the bot's `process()` method should not be caught in intermediate layers and raised to the caller's function call.
 
 Option: If there is a helper function to call `process()` multiple times (having a bunch of input messages), the exceptions are caught together with the (dumped) messages, accessible to the caller.
 
 ### Parameters and Configuration
 The global IntelMQ configuration should be effective.
-The user may override configuration options by providing an configuration dictionary.
+The user may override configuration options by providing a configuration dictionary.
 
 #### Pre-configured bots
 It should be possible to run bots defined in IntelMQ's runtime configuration file. Additional overriding parameters can be provided.
@@ -52,7 +89,7 @@ No changes in the bots' code are required.
 ### Bot constructor
 
 The operator constructs the bot by initializing the bot's class.
-Global and bot configuration parameters are provided as paramter to the constructor in the same format as IntelMQ runtime configuration.
+Global and bot configuration parameters are provided as parameter to the constructor in the same format as IntelMQ runtime configuration.
 
 ```python
 class Bot:
@@ -60,7 +97,7 @@ class Bot:
                  *args, **kwargs,  # any other paramters left out for clarity
                  settings: Optional[dict] = None)
 ```
-The constructor applies all values of the `settings` parameter after reading the runtime configuration file.
+After reading the runtime configuration file, the constructor applies all values of the `settings` parameter.
 
 ### Method call
 
@@ -89,11 +126,29 @@ The items are lists, holding the sent messages.
 #### Option: Processing multiple messages at once
 This is a more complex situation in regards to error handling.
 Should one exception stop the processing?
-Should the processing continue and the exceptions be saved in a variable, which is returned at the end together with the sent messages?
+Should the processing continue and the exceptions be saved in a variable that is returned at the end with the sent messages?
 
 ## Examples
 
-### A
+### Domain Suffix Expert Example
+
+```python
+from intelmq.bots.experts.domain_suffix.expert import DomainSuffixExpertBot
+domain_suffix = DomainSuffixExpertBot('domain-suffix',  # bot id
+                                      settings={'logging_path': None,
+                                                'source_pipeline_broker': 'Pythonlistsimple',
+                                                'destination_pipeline_broker': 'Pythonlistsimple',
+                                                'field': 'fqdn',
+                                                'suffix_file': '/usr/share/publicsuffix/public_suffix_list.dat',
+                                                'destination_queues': {'_default': 'output',
+                                                                       '_on_error': 'error'}})
+queues = domain_suffix.process_message({'source.fqdn': 'www.example.com'})
+# Select the output queue (as defined in `destination_queues`), first message, access the field 'source.domain_suffix':
+# >>> output['output'][0]['source.domain_suffix']
+# 'com'
+```
+
+### Accessing queues
 ```python
 EXAMPLE_REPORT = {"feed.url": "http://www.example.com/",
                   "time.observation": "2015-08-11T13:03:40+00:00",
@@ -116,7 +171,7 @@ assert sent_messages['output'][0] == MessageFactory.from_dict(test_parser_bot.EX
 assert sent_messages['error'][0] == input_message
 ```
 
-### B
+### Option: bot.process_call is a generator
 ```python
 from intelmq.lib.exceptions import IntelMQException
 
@@ -133,7 +188,7 @@ bot = test_parser_bot.DummyParserBot('dummy-bot', settings={'global': {'logging_
                                                                                                                 '_on_error': 'error'}}}})
 
 try:
-    # bot.process_call being a generator
+    # bot.process_call is a generator
     sent_messages = list(bot.process_message(EXAMPLE_REPORT))
     # sent_messages is now a list of sent messages
 except IntelMQException as exc:
