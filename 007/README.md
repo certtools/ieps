@@ -1,5 +1,8 @@
 # IEP007 - Running IntelMQ bots as Python Library
 
+A working example call (Proof of Concept) is located here:
+https://github.com/wagner-intevation/intelmq/blob/bot-library/intelmq/tests/lib/test_bot.py#L141
+
 ## Background
 As of IntelMQ 3.1.0, IntelMQ Bots can only be started on the command line with `intelmqctl`.
 Most tools (including the IntelMQ API, and thus the IntelMQ Manager) use `intelmqctl start` to start bot instances.
