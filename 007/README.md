@@ -19,7 +19,7 @@ The bot class is instantiated, passing a few parameters.
 from intelmq.bots.experts.domain_suffix.expert import DomainSuffixExpertBot
 domain_suffix = DomainSuffixExpertBot('domain-suffix',  # bot id
                                       settings={'logging_path': None,
-                                                'source_pipeline_broker': 'Pythonlistsimple',  # TBD: Should this be default when called as lib?
+                                                'source_pipeline_broker': 'Pythonlistsimple',  # TODO: simplify
                                                 'destination_pipeline_broker': 'Pythonlistsimple',
                                                 'field': 'fqdn',
                                                 'suffix_file': '/usr/share/publicsuffix/public_suffix_list.dat',
@@ -33,21 +33,49 @@ queues = domain_suffix.process_message({'source.fqdn': 'www.example.com'})
 
 ### Use cases
 
-#### Generic
+#### General
 Any IntelMQ-related or third-party program may use IntelMQ's most potent components - IntelMQ's bots.
+
+The full potential shows off when stacking multiple bots together and iterating over lots of data:
+
+```python
+# instantiate all bots first, for an example see above
+domain_suffix = DomainSuffixExpertBot(...)
+url2fqdn = Url2fqdnExpertBot(...)
+http_status = HttpstatusExpertBot(...)
+tuency = TuencyExpertBot(...)
+lookyloo = LookylooExpertBot(...)
+
+# a list of input messages
+messages = [{...}]
+
+for message in message:
+    for bot in (domain_suffix,
+                url2fqdn,
+                http_status,
+                tuency,
+                lookyloo):
+        # for simiplicity we assume that the bots always send one message
+        message = bot.process_message(message)['output'][0]
+    # message now has the cumulated data of five bots
+
+# messages now is a list of output messages
+```
 
 #### IntelMQ Webinput Preview
 
-The IntelMQ webinput could show previews of the *processed* data to the operator, not just the input data, adding much more value to the preview functionality.
+The IntelMQ webinput can show previews of the *processed* data to the operator, not just the input data, adding much more value to the preview functionality.
 Currently the preview gives the operator feedback on the parsing step. The further processing of the data by the bots is invisible to the operator.
 This causes confusion and uncertainty for the operators.
 
+The Webinput backend can call the bots and process the events, without any interference to the running bot processes, pipelines and bot management.
+The data flow illustrated:
 ```
 Data provided by operator -> webinput backend parser -> IntelMQ bots as configured in the webinput configuration -> preview shown to operator
 ```
-The implementation details for the webinput are not part of the IEP.
+The implementation details for the webinput are not part of this proposal document.
 
-In the next step, the webinput can also show previews of notifications (e.g. Emails):
+In the next step, the webinput can also show previews of notifications (e.g. Emails). This is also not part of this proposal document.
 ```
 Data provided by operator -> webinput backend parser -> IntelMQ bots as configured in the webinput configuration -> notification tool (preview mode) -> notification preview shown to operator
 ```
