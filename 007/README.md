@@ -20,14 +20,12 @@ The following complete example shows what the procedure could look like.
 The bot class is instantiated, passing a few parameters.
 ```python
 from intelmq.bots.experts.domain_suffix.expert import DomainSuffixExpertBot
+from intelmq.lib.bot import BotLibSettings
 domain_suffix = DomainSuffixExpertBot('domain-suffix',  # bot id
-                                      settings={'logging_path': None,
-                                                'source_pipeline_broker': 'Pythonlistsimple',  # TODO: simplify
-                                                'destination_pipeline_broker': 'Pythonlistsimple',
-                                                'field': 'fqdn',
-                                                'suffix_file': '/usr/share/publicsuffix/public_suffix_list.dat',
-                                                'destination_queues': {'_default': 'output',
-                                                                       '_on_error': 'error'}})
+                                      # the {} | {} syntax is available in Python >= 3.9
+                                      settings=BotLibSettings | {
+                                               'field': 'fqdn',
+                                               'suffix_file': '/usr/share/publicsuffix/public_suffix_list.dat'}
 queues = domain_suffix.process_message({'source.fqdn': 'www.example.com'})
 # Select the output queue (as defined in `destination_queues`), first message, access the field 'source.domain_suffix':
 # >>> output['output'][0]['source.domain_suffix']
@@ -87,8 +85,9 @@ Data provided by operator -> webinput backend parser -> IntelMQ bots as configur
 
 ### Messages and Pipeline
 Providing input messages as function parameters and receiving output messages should be possible.
+In this case, messages should not be serialized or encoded, they should stay Message objects (derived from `dict` and behaving like dictionaries).
 
-Messages should not be serialized or encoded, they should stay Message objects (derived from `dict` and behaving like dictionaries).
+It should also be possible to let the bot use the configured pipeline (e.g. redis) and behave like a normal bot.
 
 ### Exceptions and dumped messages
 An exception in the bot's `process()` method should not be caught in intermediate layers and raised to the caller's function call.
@@ -104,6 +103,25 @@ It should be possible to run bots defined in IntelMQ's runtime configuration fil
 
 #### Un-Configured bots
 It should be possible to run bots, which are not defined in IntelMQ's runtime configuration file. The bot configuration is provided as function parameter.
+
+
+### Logging
+
+By default, IntelMQ logs to `/var/log/intelmq/` or `/opt/intelmq/var/log`, respectively - depending on the installation type and actual configuration.
+When IntelMQ bots are called by other external scripts as library, the logging is in most cases not wanted and causes permission errors.
+On the other hand, the logging might as well be fine.
+There should be an easy way to disable the file-logging, while keeping the possibility to use the default behavior.
+
+### Dependency on configuration files
+
+IntelMQ in library-mode must not depend on existing IntelMQ configuration files or logging directories, but be able to behave as IntelMQ normally do.
+It is up to the user to decide the behavior, e.g. if the log of the bot should be written to files.
+
+IntelMQ normally loads the runtime configuration file `/etc/intelmq/runtime.yaml` or `/opt/intelmq/etc/runtime.yaml`.
+In library-mode, IntelMQ tries to load the file, but does continue normally if it does not exist.
+
+IntelMQ normally loads the harmonization configuration file `/etc/intelmq/harmonization.yaml` or `/opt/intelmq/etc/harmonization.yaml`.
+In library-mode, IntelMQ tries to load the file, and if it does not exist, loads the internal default harmonization configuration, which is part of the IntelMQ packages.
 
 ## Rationales
 
@@ -165,14 +183,11 @@ Should the processing continue and the exceptions be saved in a variable that is
 
 ```python
 from intelmq.bots.experts.domain_suffix.expert import DomainSuffixExpertBot
+from intelmq.lib.bot import BotLibSettings
 domain_suffix = DomainSuffixExpertBot('domain-suffix',  # bot id
-                                      settings={'logging_path': None,
-                                                'source_pipeline_broker': 'Pythonlistsimple',
-                                                'destination_pipeline_broker': 'Pythonlistsimple',
-                                                'field': 'fqdn',
-                                                'suffix_file': '/usr/share/publicsuffix/public_suffix_list.dat',
-                                                'destination_queues': {'_default': 'output',
-                                                                       '_on_error': 'error'}})
+                                      settings=BotLibSettings | {
+                                               'field': 'fqdn',
+                                               'suffix_file': '/usr/share/publicsuffix/public_suffix_list.dat'}
 queues = domain_suffix.process_message({'source.fqdn': 'www.example.com'})
 # Select the output queue (as defined in `destination_queues`), first message, access the field 'source.domain_suffix':
 # >>> output['output'][0]['source.domain_suffix']
@@ -181,17 +196,17 @@ queues = domain_suffix.process_message({'source.fqdn': 'www.example.com'})
 
 ### Accessing queues
 ```python
+from intelmq.lib.bot import BotLibSettings
+
 EXAMPLE_REPORT = {"feed.url": "http://www.example.com/",
                   "time.observation": "2015-08-11T13:03:40+00:00",
                   "raw": utils.base64_encode(RAW),
                   "__type": "Report",
                   "feed.name": "Example"}
 
-bot = test_parser_bot.DummyParserBot('dummy-bot', settings={'global': {'logging_path': None,
-                                                                       'source_pipeline_broker': 'Pythonlistsimple',
-                                                                       'destination_pipeline_broker': 'Pythonlistsimple'},
-                                                            'dummy-bot': {'parameters': {'destination_queues': {'_default': 'output',
-                                                                                                                '_on_error': 'error'}}}})
+bot = test_parser_bot.DummyParserBot('dummy-bot', settings=BotLibSettings |
+                                                           {'destination_queues': {'_default': 'output',
+                                                                                   '_on_error': 'error'}})
 
 sent_messages = bot.process_message(EXAMPLE_REPORT)
 # sent_messages is now a dict with all queues. queue names below are examples
@@ -205,6 +220,7 @@ assert sent_messages['error'][0] == input_message
 ### Option: bot.process_call is a generator
 ```python
 from intelmq.lib.exceptions import IntelMQException
+from intelmq.lib.bot import BotLibSettings
 
 EXAMPLE_REPORT = {"feed.url": "http://www.example.com/",
                   "time.observation": "2015-08-11T13:03:40+00:00",
@@ -212,11 +228,7 @@ EXAMPLE_REPORT = {"feed.url": "http://www.example.com/",
                   "__type": "Report",
                   "feed.name": "Example"}
 
-bot = test_parser_bot.DummyParserBot('dummy-bot', settings={'global': {'logging_path': None,
-                                                                       'source_pipeline_broker': 'Pythonlistsimple',
-                                                                       'destination_pipeline_broker': 'Pythonlistsimple'},
-                                                            'dummy-bot': {'parameters': {'destination_queues': {'_default': 'output',
-                                                                                                                '_on_error': 'error'}}}})
+bot = test_parser_bot.DummyParserBot('dummy-bot', settings=BotLibSettings)
 
 try:
     # bot.process_call is a generator
