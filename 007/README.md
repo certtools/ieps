@@ -104,6 +104,10 @@ It should be possible to run bots defined in IntelMQ's runtime configuration fil
 #### Un-Configured bots
 It should be possible to run bots, which are not defined in IntelMQ's runtime configuration file. The bot configuration is provided as function parameter.
 
+### Signals
+Normally bots react to signals like SIGTERM, SIGHUP and SIGINT to treat them specially.
+In library mode, this would interfere with the signal handling of the calling code.
+Thus, IntelMQ bots called as library must not manipulate the signal handling or call `sys.exit`.
 
 ### Logging
 
