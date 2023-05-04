@@ -130,9 +130,9 @@ In library-mode, IntelMQ tries to load the file, and if it does not exist, loads
 ## Rationales
 
 ### Compatibility
-Since the beginning of IntelMQ, the bot's `process` methods use the methods `self.receive_message`, `self.acknowledge_message` and `self.send_message`. Breaking this paradigm and changing to method parameters and return values or generator yields would indicate an API change and thus lead to IntelMQ version 4.0.
-To be decided if this should be done.
-Maybe as another IEP?
+Since the beginning of IntelMQ, the bot's `process` methods use the methods `self.receive_message`, `self.acknowledge_message` and `self.send_message`.
+Breaking this paradigm and changing to method parameters and return values or generator yields would indicate an API change and thus lead to IntelMQ version 4.0.
+Thus, we stick to the current behavior.
 
 ## Specification
 
@@ -219,25 +219,4 @@ sent_messages = bot.process_message(EXAMPLE_REPORT)
 assert sent_messages['output'][0] == MessageFactory.from_dict(test_parser_bot.EXAMPLE_EVENT)
 # this is a dumped message
 assert sent_messages['error'][0] == input_message
-```
-
-### Option: bot.process_call is a generator
-```python
-from intelmq.lib.exceptions import IntelMQException
-from intelmq.lib.bot import BotLibSettings
-
-EXAMPLE_REPORT = {"feed.url": "http://www.example.com/",
-                  "time.observation": "2015-08-11T13:03:40+00:00",
-                  "raw": utils.base64_encode(RAW),
-                  "__type": "Report",
-                  "feed.name": "Example"}
-
-bot = test_parser_bot.DummyParserBot('dummy-bot', settings=BotLibSettings)
-
-try:
-    # bot.process_call is a generator
-    sent_messages = list(bot.process_message(EXAMPLE_REPORT))
-    # sent_messages is now a list of sent messages
-except IntelMQException as exc:
-    sys.exit('Processing exception')
 ```
