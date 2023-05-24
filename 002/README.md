@@ -56,7 +56,7 @@ for the mixins.
 
 I have created a POC that implements the HttpMixin and uses it in the
 HTTPCollectorBot:
-https://github.com/certtools/intelmq/tree/schacht/http-mixin
+https://github.com/certtools/intelmq/blob/develop/intelmq/lib/mixins/http.py
 
 
 Mixins are also used in Django to add functionality to their class based Views,
