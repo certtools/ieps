@@ -54,7 +54,6 @@ Because of the simplicity, I've chosen to propose adding a simple text field in 
 ```
 "constituency": {
     "description": "Internal identifier for multi-constituency setup",
-    "length": 10,
     "type": "String"
 }
 ```
