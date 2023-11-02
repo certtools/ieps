@@ -69,6 +69,9 @@ In addition, the following assumptions are made:
   * Machine-readable fields can still be used to retrieve additional information, e.g. query
     vulnerability databases for advisory URL or CPE product dictionary to get the human-readable
     product name.
+  * As there is an open discussion about a severity field [[8]](https://github.com/certtools/intelmq/issues/2365),
+    it's not a part of this IEP. However, if introduced, it can be used to mark the severity of a
+    vulnerability.
 
 Thus, the following new fields are proposed:
 
@@ -78,6 +81,6 @@ Thus, the following new fields are proposed:
 |Product | `product.vendor` | `LowercaseString` | Vendor name, recommended being as _vendor_ in the CPE format. | `openbsd` |
 | Product | `product.product` | `LowercaseString` | Product name, recommended being as the _product_ in the CPE format. | `openssh` |
 | Product | `product.version` | `LowercaseString` | Product version, recommended being as _version_ in the CPE format | `8.9` |
-| Product | `product.vulnerabilities` | `LowercaseString` | List of vulnerability IDs, separated by semicolons. It's recommended to use a CVE ID where available, and other easily retrievable IDs in other cases, e.g. Github Advisory Database ID [[8]](https://docs.github.com/en/code-security/security-advisories/working-with-global-security-advisories-from-the-github-advisory-database/browsing-security-advisories-in-the-github-advisory-database). Each vulnerability should only be listed once, and multiple values should be used if there are several different vulnerabilities. However, it's not necessary for a source to list all possible vulnerabilities for a given piece of software. | `cve-2023-38408;cve-2023-28531;cve-2008-3844;cve-2007-2768` |
+| Product | `product.vulnerabilities` | `LowercaseString` | List of vulnerability IDs, separated by semicolons. It's recommended to use a CVE ID where available, and other easily retrievable IDs in other cases, e.g. Github Advisory Database ID [[9]](https://docs.github.com/en/code-security/security-advisories/working-with-global-security-advisories-from-the-github-advisory-database/browsing-security-advisories-in-the-github-advisory-database). Each vulnerability should only be listed once, and multiple values should be used if there are several different vulnerabilities. However, it's not necessary for a source to list all possible vulnerabilities for a given piece of software. | `cve-2023-38408;cve-2023-28531;cve-2008-3844;cve-2007-2768` |
 
 This should only be added to the `event` schema.
