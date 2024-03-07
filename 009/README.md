@@ -1,8 +1,7 @@
 # IEP009: IntelMQ Data Format: Describe product and mark vulnerabilities
 
-The original intention behind IntelMQ was to track malicious connections. Today we see
-increasing use in tracking known vulnerabilities in specific online accessible software. IntelMQ
-Data Format does not natively support any kind of identification of which product is affected, or
+Today we see increasing use in tracking known vulnerabilities in specific online accessible software.
+IntelMQ Data Format does not natively support any kind of identification of which product is affected, or
 presentation of the vulnerability list. The only existing method is to use the `extra` field.
 
 This IEP aims to address the increasing use of vulnerability reports by proposing additional
