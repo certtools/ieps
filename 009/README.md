@@ -77,9 +77,9 @@ Thus, the following new fields are proposed:
 
 | Group | Name | IDF type | Description | Example »
 | - | ---- | ---- | ----- | - |
-| Product | `product.name` | `String` | A human readable product name. If a machine-readable format isn't available, this field should be used. It can directly use the version identification strings presented by the product. If not given, a good enough value can usually be constructed by concatenating `product.product` and `product.version`, or by consulting external sources such as the CPE Product Dictionary. | `openssh_/8.9` |
+| Product | `product.full_name` | `String` | A human readable product name. If a machine-readable format isn't available, this field should be used. It can directly use the version identification strings presented by the product. If not given, a good enough value can usually be constructed by concatenating `product.product` and `product.version`, or by consulting external sources such as the CPE Product Dictionary. | `openssh_/8.9` |
 |Product | `product.vendor` | `LowercaseString` | Vendor name, recommended being as _vendor_ in the CPE format. | `openbsd` |
-| Product | `product.product` | `LowercaseString` | Product name, recommended being as the _product_ in the CPE format. | `openssh` |
+| Product | `product.name` | `LowercaseString` | Product name, recommended being as the _product_ in the CPE format. | `openssh` |
 | Product | `product.version` | `LowercaseString` | Product version, recommended being as _version_ in the CPE format | `8.9` |
 | Product | `product.vulnerabilities` | `LowercaseString` | List of vulnerability IDs, separated by semicolons. It's recommended to use a CVE ID where available, and other easily retrievable IDs in other cases, e.g. Github Advisory Database ID [[9]](https://docs.github.com/en/code-security/security-advisories/working-with-global-security-advisories-from-the-github-advisory-database/browsing-security-advisories-in-the-github-advisory-database). Each vulnerability should only be listed once, and multiple values should be used if there are several different vulnerabilities. However, it's not necessary for a source to list all possible vulnerabilities for a given piece of software. | `cve-2023-38408;cve-2023-28531;cve-2008-3844;cve-2007-2768` |
 
