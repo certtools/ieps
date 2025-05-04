@@ -4,6 +4,10 @@ This repository is for collaboratively creating IntelMQ Enhancement Proposals.
 IEPs are needed for major and/or architectural changes in IntelMQ.
 The IEPs should be discussion on the [intelmq-dev Mailinglist](https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-dev).
 
+## Process
+
+![The IEP Process](static/process-diagram.svg)
+
 ## List of IEPs
 
 | #   | Name                                                                                  | Status                                                                                     | Target release |
