@@ -21,7 +21,7 @@ The IEPs should be discussion on the [intelmq-dev Mailinglist](https://lists.cer
 | 007 | [Running IntelMQ as Python Library](007/)                              | [Implementation completed](https://github.com/certtools/intelmq/blob/3.2.0/NEWS.md)        | 3.2.0          |
 | 008 | [IntelMQ Data Format: Constituency field](008/)                        | Discussion in progress                                                                     | 3.x.0          |
 | 009 | [IntelMQ Data Format: Describe product and mark vulnerabilities](009/) | Discussion in progress                                                                     | 3.x.0          |
-| 010 | [Shadowserver schema update](010/)                                     | [Implementation completed](https://github.com/certtools/intelmq/pull/2372)                 | 3.3.0          |
+| 010 | [Shadowserver schema update (2025-01-14)](010/)                        | [Implementation completed](https://github.com/certtools/intelmq/pull/2372)                 | 3.3.0          |
 
 ### Status legend
 * Undiscussed: The IEP was not yet discussed and/or is not yet finished
